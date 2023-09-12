@@ -1,0 +1,6 @@
+Flask
+Flask-MySQL
+gunicorn
+python-dotenv
+waitress
+mysql-connector-python
