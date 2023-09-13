@@ -50,7 +50,7 @@ def get_name(name):
             return jsonify({'error': 'Invalid name format'})
         else:
             # Query the database for the person with the given name
-            query = "SELECT name FROM studentrecord WHERE name = %s"
+            query = "SELECT * FROM studentrecord WHERE name = %s"
             cur = mysql.connect().cursor()
             cur.execute(query, (name,))
             result = cur.fetchone()
@@ -60,7 +60,7 @@ def get_name(name):
                 return jsonify({'error': 'Name not found'})
             
             result_data = {
-            #"id": result[0],
+            "id": result[0],
             "name": result[1],
             "track": result[2],
             "language": result[3]
@@ -94,21 +94,24 @@ def update_person(person_id):
         return jsonify({"error": str(e)}), 500
 
 # Delete a person by ID (HTTP DELETE)
-@app.route('/api/<int:person_id>', methods=['DELETE'])
-def delete_person(person_id):
+@app.route('/api/name', methods=['DELETE'])
+def delete_person(person):
     try:
+        if not isinstance(name, str) or not name.isalpha():
+            return jsonify({'error': 'Invalid name format'})
         # Check if the person exists before deleting it
-        query = "SELECT id FROM studentrecord WHERE id = %s"
+        query = "SELECT name FROM studentrecord WHERE name = %s"
         cur = mysql.connect().cursor()
-        cur.execute(query, (person_id,))
+        cur.execute(query, (person,))
         existing_person = cur.fetchone()
 
         if not existing_person:
-            return jsonify({"error": "person not found"}), 404
+            return jsonify({"error": "Records of person not found", "data": {"person": person}}), 404
 
         # Delete the person from the database
-        delete_query = "DELETE FROM studentrecord WHERE id = %s"
-        cur.execute(delete_query, (person_id,))
+        delete_query = "DELETE FROM studentrecord WHERE name = %s"
+        cur = mysql.connect().cursor()
+        cur.execute(delete_query, (person,))
         #db_connection.commit()
         cur.close()
 

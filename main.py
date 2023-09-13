@@ -51,33 +51,11 @@ def create_person():
 
         person_id = cursor.lastrowid  # Get the ID of the newly inserted person
 
-        return jsonify({"message": "studentrecord created successfully", "data": {"id": person_id, "name": name, "track": track, "language": language}}), 201
+        return jsonify({"message": "studentrecord created successfully", "student": {"id": person_id, "name": name, "track": track, "language": language}}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 # Get a person by ID (HTTP GET)
-# @app.route('/api/<int:person_id>', methods=['GET'])
-# def get_person_by_id(person_id):
-#     try:
-#         # Query the database for the person with the given ID
-#         query = "SELECT id, name, track, language FROM studentrecord WHERE id = %s"
-#         cursor.execute(query, (person_id,))
-#         person = cursor.fetchone()
-
-#         if not person:
-#             return jsonify({"error": "person not found"}), 404
-
-#         person_data = {
-#             "id": person[0],
-#             "name": person[1],
-#             "track": person[2],
-#             "language": person[3]
-#         }
-
-#         return jsonify({"data": person_data}), 200
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
 @app.route('/api/<name>', methods=['GET'])
 def get_name(name):
     """Get a name by name."""
@@ -86,22 +64,22 @@ def get_name(name):
             return jsonify({'error': 'Invalid name format'})
         else:
             # Query the database for the person with the given name
-            query = "SELECT name FROM studentrecord WHERE name = %s"
+            query = "SELECT * FROM studentrecord WHERE name = %s"
             cursor.execute(query, (name,))
-            result = cursor.fetchone()
+            student = cursor.fetchone()
             cursor.close()
 
-            if result is None:
+            if student is None:
                 return jsonify({'error': 'Name not found'})
             
-            result_data = {
-            #"id": result[0],
-            "name": result[0],
-            "track": result[1],
-            "language": result[2]
+            student_data = {
+            "id": student[0],
+            "name": student[1],
+            "track": student[2],
+            "language": student[3]
         }
 
-            return jsonify({'data': result_data}), 200
+            return jsonify({'data': student_data}), 200
     except Exception as e:
          return jsonify({"error": str(e)}), 500
 
@@ -118,32 +96,36 @@ def update_person(person_id):
             return jsonify({"error": "Invalid data"}), 400
 
         # Update the person in the database
+        # UPDATE `studentrecord` SET `name` = REPLACE(`name`, 'radis', 'justin') WHERE `name` LIKE '%radis%' COLLATE utf8mb4_bin
         update_query = "UPDATE studentrecord SET name = %s, track = %s, language = %s WHERE id = %s"
         cursor.execute(update_query, (name, track, language, person_id))
         db_connection.commit()
 
-        return jsonify({"message": "person updated successfully", "data": {"id": person_id, "name": name, "track": track, "language": language}}), 200
+        return jsonify({"message": "person updated successfully", "student": {"id": person_id, "name": name, "track": track, "language": language}}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 # Delete a person by ID (HTTP DELETE)
-@app.route('/api/<int:person_id>', methods=['DELETE'])
-def delete_person(person_id):
+@app.route('/api/name', methods=['DELETE'])
+def delete_person(name):
     try:
+        #name = request.args.get('name')
+        if not isinstance(name, str) or not name.isalpha():
+            return jsonify({'error': 'Invalid name format'})
         # Check if the person exists before deleting it
-        query = "SELECT id FROM studentrecord WHERE id = %s"
-        cursor.execute(query, (person_id,))
+        query = "SELECT name FROM studentrecord WHERE name = %s"
+        cursor.execute(query, (name,))
         existing_person = cursor.fetchone()
 
         if not existing_person:
-            return jsonify({"error": "person not found"}), 404
+            return jsonify({"error": "person not found", "data": {"person": name}}), 404
 
         # Delete the person from the database
-        delete_query = "DELETE FROM studentrecord WHERE id = %s"
-        cursor.execute(delete_query, (person_id,))
+        delete_query = "DELETE FROM studentrecord WHERE name = %s"
+        cursor.execute(delete_query, (name,))
         db_connection.commit()
 
-        return jsonify({"message": "person deleted successfully", "data": {"id": person_id, "name": name, "track": track, "language": language}}), 200
+        return jsonify({"message": "person deleted successfully", "student": { "id":person_id, "name": name, "track": track, "language": language}}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
