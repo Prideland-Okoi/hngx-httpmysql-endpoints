@@ -40,4 +40,4 @@ If you encounter any issues or have suggestions for improvements, please open an
 
 ## License
 
-By contributing to this project, you agree that your contributions will be licensed under the [MIT License](). For more details, see the LICENSE file.
+By contributing to this project, you agree that your contributions will be licensed under the [MIT License](https://mit-license.org/). For more details, see the LICENSE file.
