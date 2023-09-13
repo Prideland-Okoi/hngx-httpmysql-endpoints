@@ -12,19 +12,23 @@ To get started with contributing, follow these steps:
 
 `git clone https://github.com/prideland-okoi/hngx-httpmysql-endpoints.git`
 
-    1. Create a new branch for your contribution:
+\*\* Create a new branch for your contribution:
 
-    `git checkout -b feature/my-contribution`
+```
+git checkout -b feature/my-contribution
+```
 
-    2. Make your changes and commit them to your branch.
+\*\* Make your changes and commit them to your branch.
 
-    3. Push your branch to your forked repository:
+\*\* Push your branch to your forked repository:
 
-    `git push origin feature/my-contribution`
+```
+git push origin feature/my-contribution
+```
 
-    4. Create a pull request (PR) from your branch to the main repository on GitHub.
+\*\* Create a pull request (PR) from your branch to the main repository on GitHub.
 
-    5. Wait for your PR to be reviewed and merged.
+\*\* Wait for your PR to be reviewed and merged.
 
 ## Coding Guidelines
 
