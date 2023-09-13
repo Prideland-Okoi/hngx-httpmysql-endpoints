@@ -18,11 +18,10 @@ cursor = db_connection.cursor()
 
 # Create a table for hngx student if it doesn't exist
 create_table_query = """
-CREATE TABLE IF NOT EXISTS studentrecord (
+CREATE TABLE IF NOT EXISTS studentlog (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    track VARCHAR(255) NOT NULL,
-    language VARCHAR(255) NOT NULL
+    track VARCHAR(255) NOT NULL
 )
 """
 cursor.execute(create_table_query)
@@ -39,19 +38,19 @@ def create_person():
         data = request.get_json()
         name = data.get('name')
         track = data.get('track')
-        language = data.get('language')
+        #language = data.get('language')
 
-        if not is_valid_string(name) or not is_valid_string(track) or not is_valid_string(language):
+        if not is_valid_string(name) or not is_valid_string(track):# or not is_valid_string(language):
             return jsonify({"error": "Invalid data"}), 400
 
         # Insert the new person into the database
-        insert_query = "INSERT INTO studentrecord (name, track, language) VALUES (%s, %s, %s)"
-        cursor.execute(insert_query, (name, track, language))
+        insert_query = "INSERT INTO studentlog (name, track) VALUES (%s, %s)"
+        cursor.execute(insert_query, (name, track))
         db_connection.commit()
 
         person_id = cursor.lastrowid  # Get the ID of the newly inserted person
 
-        return jsonify({"message": "studentrecord created successfully", "student": {"id": person_id, "name": name, "track": track, "language": language}}), 201
+        return jsonify({"message": "studentlog created successfully", "student": {"id": person_id, "name": name, "track": track}}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -64,7 +63,7 @@ def get_name(name):
             return jsonify({'error': 'Invalid name format'})
         else:
             # Query the database for the person with the given name
-            query = "SELECT * FROM studentrecord WHERE name = %s"
+            query = "SELECT * FROM studentlog WHERE name = %s"
             cursor.execute(query, (name,))
             student = cursor.fetchone()
             cursor.close()
@@ -75,8 +74,7 @@ def get_name(name):
             student_data = {
             "id": student[0],
             "name": student[1],
-            "track": student[2],
-            "language": student[3]
+            "track": student[2]
         }
 
             return jsonify({'data': student_data}), 200
@@ -90,18 +88,18 @@ def update_person(person_id):
         data = request.json
         name = data.get('name')
         track = data.get('track')
-        language = data.get('language')
+        #language = data.get('language')
 
-        if not is_valid_string(name) or not is_valid_string(track) or not is_valid_string(language):
+        if not is_valid_string(name) or not is_valid_string(track):# or not is_valid_string(language):
             return jsonify({"error": "Invalid data"}), 400
 
         # Update the person in the database
-        # UPDATE `studentrecord` SET `name` = REPLACE(`name`, 'radis', 'justin') WHERE `name` LIKE '%radis%' COLLATE utf8mb4_bin
-        update_query = "UPDATE studentrecord SET name = %s, track = %s, language = %s WHERE id = %s"
+        # UPDATE `studentlog` SET `name` = REPLACE(`name`, 'radis', 'justin') WHERE `name` LIKE '%radis%' COLLATE utf8mb4_bin
+        update_query = "UPDATE studentlog SET name = %s, track = %s WHERE id = %s"
         cursor.execute(update_query, (name, track, language, person_id))
         db_connection.commit()
 
-        return jsonify({"message": "person updated successfully", "student": {"id": person_id, "name": name, "track": track, "language": language}}), 200
+        return jsonify({"message": "person updated successfully", "student": {"id": person_id, "name": name, "track": track}}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -113,7 +111,7 @@ def delete_person(name):
         if not isinstance(name, str) or not name.isalpha():
             return jsonify({'error': 'Invalid name format'})
         # Check if the person exists before deleting it
-        query = "SELECT name FROM studentrecord WHERE name = %s"
+        query = "SELECT name FROM studentlog WHERE name = %s"
         cursor.execute(query, (name,))
         existing_person = cursor.fetchone()
 
@@ -121,11 +119,11 @@ def delete_person(name):
             return jsonify({"error": "person not found", "data": {"person": name}}), 404
 
         # Delete the person from the database
-        delete_query = "DELETE FROM studentrecord WHERE name = %s"
+        delete_query = "DELETE FROM studentlog WHERE name = %s"
         cursor.execute(delete_query, (name,))
         db_connection.commit()
 
-        return jsonify({"message": "person deleted successfully", "student": { "id":person_id, "name": name, "track": track, "language": language}}), 200
+        return jsonify({"message": "person deleted successfully", "student": { "id":person_id, "name": name, "track": track}}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

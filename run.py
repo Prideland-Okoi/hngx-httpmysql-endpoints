@@ -24,20 +24,20 @@ def create_person():
         data = request.get_json()
         name = data.get('name')
         track = data.get('track')
-        language = data.get('language')
+        #language = data.get('language')
 
-        if not is_valid_string(name) or not is_valid_string(track) or not is_valid_string(language):
+        if not is_valid_string(name) or not is_valid_string(track):# or not is_valid_string(language):
             return jsonify({"error": "Invalid data"}), 400
 
         # Insert the new person into the database
-        insert_query = "INSERT INTO studentrecord (name, track, language) VALUES (%s, %s, %s)"
+        insert_query = "INSERT INTO studentlog (name, track) VALUES (%s, %s)"
         cur = mysql.connect().cursor()
-        cur.execute(insert_query, (name, track, language))
+        cur.execute(insert_query, (name, track))
         cur.close()
 
         person_id = cur.lastrowid  # Get the ID of the newly inserted person
 
-        return jsonify({"message": "studentrecord created successfully", "data": {"id": person_id, "name": name, "track": track, "language": language}}), 201
+        return jsonify({"message": "studentlog created successfully", "data": {"id": person_id, "name": name, "track": track,}}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -50,7 +50,7 @@ def get_name(name):
             return jsonify({'error': 'Invalid name format'})
         else:
             # Query the database for the person with the given name
-            query = "SELECT * FROM studentrecord WHERE name = %s"
+            query = "SELECT * FROM studentlog WHERE name = %s"
             cur = mysql.connect().cursor()
             cur.execute(query, (name,))
             result = cur.fetchone()
@@ -62,8 +62,7 @@ def get_name(name):
             result_data = {
             "id": result[0],
             "name": result[1],
-            "track": result[2],
-            "language": result[3]
+            "track": result[2]
         }
 
             return jsonify({'data': result_data}), 200
@@ -83,13 +82,13 @@ def update_person(person_id):
             return jsonify({"error": "Invalid data"}), 400
 
         # Update the person in the database
-        update_query = "UPDATE studentrecord SET name = %s, track = %s, language = %s WHERE id = %s"
+        update_query = "UPDATE studentlog SET name = %s, track = %s WHERE name = %s"
         cur = mysql.connect().cursor()
-        cur.execute(update_query, (name, track, language, person_id))
+        cur.execute(update_query, (name, track))
         #cur.commit()
         cur.close()
 
-        return jsonify({"message": "person updated successfully", "data": {"id": person_id, "name": name, "track": track, "language": language}}), 200
+        return jsonify({"message": "person updated successfully", "data": {"id": person_id, "name": name, "track": track}}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -100,7 +99,7 @@ def delete_person(person):
         if not isinstance(name, str) or not name.isalpha():
             return jsonify({'error': 'Invalid name format'})
         # Check if the person exists before deleting it
-        query = "SELECT name FROM studentrecord WHERE name = %s"
+        query = "SELECT name FROM studentlog WHERE name = %s"
         cur = mysql.connect().cursor()
         cur.execute(query, (person,))
         existing_person = cur.fetchone()
@@ -109,13 +108,13 @@ def delete_person(person):
             return jsonify({"error": "Records of person not found", "data": {"person": person}}), 404
 
         # Delete the person from the database
-        delete_query = "DELETE FROM studentrecord WHERE name = %s"
+        delete_query = "DELETE FROM studentlog WHERE name = %s"
         cur = mysql.connect().cursor()
         cur.execute(delete_query, (person,))
         #db_connection.commit()
         cur.close()
 
-        return jsonify({"message": "person deleted successfully", "data": {"id": person_id, "name": name, "track": track, "language": language}}), 200
+        return jsonify({"message": "person deleted successfully", "data": {"id": person_id, "name": name, "track": track}}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
