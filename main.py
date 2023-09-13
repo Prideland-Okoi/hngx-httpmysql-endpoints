@@ -96,7 +96,7 @@ def update_person(person_id):
         # Update the person in the database
         # UPDATE `studentlog` SET `name` = REPLACE(`name`, 'radis', 'justin') WHERE `name` LIKE '%radis%' COLLATE utf8mb4_bin
         update_query = "UPDATE studentlog SET name = %s, track = %s WHERE id = %s"
-        cursor.execute(update_query, (name, track, language, person_id))
+        cursor.execute(update_query, (name, track, person_id))
         db_connection.commit()
 
         return jsonify({"message": "person updated successfully", "student": {"id": person_id, "name": name, "track": track}}), 200

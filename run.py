@@ -17,9 +17,9 @@ mysql = MySQL(app)
 def is_valid_string(value):
     return isinstance(value, str) or not name.isalpha()
 
-# Create a new person (HTTP POST)
+# Create a new student (HTTP POST)
 @app.route('/api', methods=['POST'])
-def create_person():
+def create_student():
     try:
         data = request.get_json()
         name = data.get('name')
@@ -28,31 +28,35 @@ def create_person():
         if not is_valid_string(name) or not is_valid_string(track):
             return jsonify({"error": "Invalid data"}), 400
 
-        # Insert the new person into the database
+        # Insert the new student into the database
         insert_query = "INSERT INTO studentlog (name, track) VALUES (%s, %s)"
-        cur = mysql.connect().cursor()
-        cur.execute(insert_query, (name, track))
-        cur.close()
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        cursor.execute(insert_query, (name, track))
+        #cursor.close()
 
-        person_id = cur.lastrowid  # Get the ID of the newly inserted person
+        # Commit changes to the database
+        connection.commit()
 
-        return jsonify({"message": "studentlog created successfully", "student log": {"id": person_id, "name": name, "track": track,}}), 201
+        student_id = cursor.lastrowid  # Get the ID of the newly inserted student
+
+        return jsonify({"message": "studentlog created successfully", "student log": {"id": student_id, "name": name, "track": track,}}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Get a person by name (HTTP GET)
+# Get a student by name (HTTP GET)
 @app.route('/api/<name>', methods=['GET'])
-def get_name(name):
-    """Get a name by name."""
+def get_student(name):
+    """Get student by name."""
     try:
         if not isinstance(name, str) or not name.isalpha():
             return jsonify({'error': 'Invalid name format'})
         else:
-            # Query the database for the person with the given name
+            # Query the database for the student with the given name
             query = "SELECT * FROM studentlog WHERE name = %s"
             cur = mysql.connect().cursor()
-            cur.execute(query, (name,))
-            result = cur.fetchone()
+            cur.execute(query, (name))
+            student = cur.fetchone()
             cur.close()
 
             if student is None:
@@ -62,58 +66,60 @@ def get_name(name):
             "id": student[0],
             "name": student[1],
             "track": student[2]
-        }
+            }
 
-            return jsonify({'data': student_data}), 200
+            return jsonify({'student info': student_data}), 200
     except Exception as e:
          return jsonify({"error": str(e)}), 500
 
-# Update a person by ID (HTTP PUT)
-@app.route('/api/<int:person_id>', methods=['PUT'])
-def update_person(person_id):
+# Update a student by ID (HTTP PUT)
+@app.route('/api/<name>', methods=['PUT'])
+def update_student(name):
     try:
-        data = request.json
-        name = data.get('name')
-        track = data.get('track')
+        #data = request.json.get('data')
+        data = request.get_json()
+        new_name = data.get('name')
+        new_track = data.get('track')
 
-        if not is_valid_string(name) or not is_valid_string(track):
+        if not is_valid_string(name):
             return jsonify({"error": "Invalid data"}), 400
-
-        # Update the person in the database
-        update_query = "UPDATE studentlog SET name = %s, track = %s WHERE name = %s"
-        cur = mysql.connect().cursor()
-        cur.execute(update_query, (name, track))
-        #cur.commit()
-        cur.close()
-
-        return jsonify({"message": "person updated successfully", "data": {"id": person_id, "name": name, "track": track}}), 200
+        else:
+            # Update the person in the database
+            update_query = "UPDATE studentlog SET name = %s, track = %s WHERE name = %s"
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            cursor.execute(update_query, (new_name, new_track, name))
+            connection.commit()
+            return jsonify({"message": "person updated successfully", "student info": new_name}), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+                return jsonify({"error": str(e)}), 500
 
-# Delete a person by name (HTTP DELETE)
-@app.route('/api/name', methods=['DELETE'])
-def delete_person(person):
+# Delete a student by name (HTTP DELETE)
+@app.route('/api/<name>', methods=['DELETE'])
+def delete_student(name):
     try:
         if not isinstance(name, str) or not name.isalpha():
             return jsonify({'error': 'Invalid name format'})
         else:
-            # Check if the person exists before deleting it
+            # Check if the student exists before deleting it
             query = "SELECT name FROM studentlog WHERE name = %s"
-            cur = mysql.connect().cursor()
-            cur.execute(query, (person,))
-            existing_person = cur.fetchone()
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            cursor.execute(query, (name))
+            existing_student = cursor.fetchone()
 
-            if not existing_person:
-                return jsonify({"error": "Records of person not found", "data": {"person": person}}), 404
+            if not existing_student:
+                return jsonify({"error": "Records of person not found", "search": {"name": name}}), 404
+            else:
+                # Delete the person from the database
+                delete_query = "DELETE FROM studentlog WHERE name = %s"
+                connection = mysql.connect()
+                cursor = connection.cursor()
+                cursor.execute(delete_query, (name))
+                connection.commit()
+                #cursor.close()
 
-            # Delete the person from the database
-            delete_query = "DELETE FROM studentlog WHERE name = %s"
-            cur = mysql.connect().cursor()
-            cur.execute(delete_query, (person,))
-            #db_connection.commit()
-            cur.close()
-
-            return jsonify({"message": "person deleted successfully", "data": {"id": person_id, "name": name, "track": track}}), 200
+                return jsonify({"message": "student deleted successfully", "data": {"name": name }}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
