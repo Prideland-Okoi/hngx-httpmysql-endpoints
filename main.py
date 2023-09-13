@@ -82,7 +82,7 @@ def get_name(name):
          return jsonify({"error": str(e)}), 500
 
 # Update a person by ID (HTTP PUT)
-@app.route('/api/<int:person_id>', methods=['PUT'])
+@app.route('/api/<name>', methods=['PUT'])
 def update_person(person_id):
     try:
         data = request.json
@@ -109,21 +109,22 @@ def delete_person(name):
     try:
         #name = request.args.get('name')
         if not isinstance(name, str) or not name.isalpha():
-            return jsonify({'error': 'Invalid name format'})
+            return jsonify({'error': 'Invalid name format'}), 400
         # Check if the person exists before deleting it
-        query = "SELECT name FROM studentlog WHERE name = %s"
-        cursor.execute(query, (name,))
-        existing_person = cursor.fetchone()
+        else:
+            query = "SELECT name FROM studentlog WHERE name = %s"
+            cursor.execute(query, (name,))
+            existing_person = cursor.fetchone()
 
-        if not existing_person:
-            return jsonify({"error": "person not found", "data": {"person": name}}), 404
+            if not existing_person:
+                return jsonify({"error": "person not found", "data": {"person": name}}), 404
 
-        # Delete the person from the database
-        delete_query = "DELETE FROM studentlog WHERE name = %s"
-        cursor.execute(delete_query, (name,))
-        db_connection.commit()
+            # Delete the person from the database
+            delete_query = "DELETE FROM studentlog WHERE name = %s"
+            cursor.execute(delete_query, (name,))
+            db_connection.commit()
 
-        return jsonify({"message": "person deleted successfully", "student": { "id":person_id, "name": name, "track": track}}), 200
+            return jsonify({"message": "person deleted successfully", "student": { "id":person_id, "name": name, "track": track}}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

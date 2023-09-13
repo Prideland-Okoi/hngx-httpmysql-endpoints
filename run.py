@@ -24,9 +24,8 @@ def create_person():
         data = request.get_json()
         name = data.get('name')
         track = data.get('track')
-        #language = data.get('language')
 
-        if not is_valid_string(name) or not is_valid_string(track):# or not is_valid_string(language):
+        if not is_valid_string(name) or not is_valid_string(track):
             return jsonify({"error": "Invalid data"}), 400
 
         # Insert the new person into the database
@@ -37,7 +36,7 @@ def create_person():
 
         person_id = cur.lastrowid  # Get the ID of the newly inserted person
 
-        return jsonify({"message": "studentlog created successfully", "data": {"id": person_id, "name": name, "track": track,}}), 201
+        return jsonify({"message": "studentlog created successfully", "student log": {"id": person_id, "name": name, "track": track,}}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -56,16 +55,16 @@ def get_name(name):
             result = cur.fetchone()
             cur.close()
 
-            if result is None:
+            if student is None:
                 return jsonify({'error': 'Name not found'})
             
-            result_data = {
-            "id": result[0],
-            "name": result[1],
-            "track": result[2]
+            student_data = {
+            "id": student[0],
+            "name": student[1],
+            "track": student[2]
         }
 
-            return jsonify({'data': result_data}), 200
+            return jsonify({'data': student_data}), 200
     except Exception as e:
          return jsonify({"error": str(e)}), 500
 
@@ -76,9 +75,8 @@ def update_person(person_id):
         data = request.json
         name = data.get('name')
         track = data.get('track')
-        language = data.get('language')
 
-        if not is_valid_string(name) or not is_valid_string(track) or not is_valid_string(language):
+        if not is_valid_string(name) or not is_valid_string(track):
             return jsonify({"error": "Invalid data"}), 400
 
         # Update the person in the database
@@ -92,29 +90,30 @@ def update_person(person_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Delete a person by ID (HTTP DELETE)
+# Delete a person by name (HTTP DELETE)
 @app.route('/api/name', methods=['DELETE'])
 def delete_person(person):
     try:
         if not isinstance(name, str) or not name.isalpha():
             return jsonify({'error': 'Invalid name format'})
-        # Check if the person exists before deleting it
-        query = "SELECT name FROM studentlog WHERE name = %s"
-        cur = mysql.connect().cursor()
-        cur.execute(query, (person,))
-        existing_person = cur.fetchone()
+        else:
+            # Check if the person exists before deleting it
+            query = "SELECT name FROM studentlog WHERE name = %s"
+            cur = mysql.connect().cursor()
+            cur.execute(query, (person,))
+            existing_person = cur.fetchone()
 
-        if not existing_person:
-            return jsonify({"error": "Records of person not found", "data": {"person": person}}), 404
+            if not existing_person:
+                return jsonify({"error": "Records of person not found", "data": {"person": person}}), 404
 
-        # Delete the person from the database
-        delete_query = "DELETE FROM studentlog WHERE name = %s"
-        cur = mysql.connect().cursor()
-        cur.execute(delete_query, (person,))
-        #db_connection.commit()
-        cur.close()
+            # Delete the person from the database
+            delete_query = "DELETE FROM studentlog WHERE name = %s"
+            cur = mysql.connect().cursor()
+            cur.execute(delete_query, (person,))
+            #db_connection.commit()
+            cur.close()
 
-        return jsonify({"message": "person deleted successfully", "data": {"id": person_id, "name": name, "track": track}}), 200
+            return jsonify({"message": "person deleted successfully", "data": {"id": person_id, "name": name, "track": track}}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
