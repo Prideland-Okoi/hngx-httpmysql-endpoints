@@ -72,7 +72,20 @@ def get_student(name):
     except Exception as e:
          return jsonify({"error": str(e)}), 500
 
-# Update a student by ID (HTTP PUT)
+# Get all the students create (HTTP GET)
+@app.route('/api/', methods=['GET'])
+# for testing purpose
+def get_names():
+    """Get all names."""
+    connection = mysql.connect()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM studentlog')
+    names = cursor.fetchall()
+    cursor.close()
+
+    return jsonify(names)
+
+# Update a student by name (HTTP PUT)
 @app.route('/api/<name>', methods=['PUT'])
 def update_student(name):
     try:

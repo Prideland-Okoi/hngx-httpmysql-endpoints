@@ -1,47 +1,96 @@
-# Contributing to Student Management API
+# Person Flask MySQL API
 
-Thank you for considering contributing to the HNGx Student Management API. I welcome contributions from the community to improve and enhance this project.
+This is a simple RESTful API built with Flask and MySQL for managing names. It allows you to perform basic CRUD (Create, Read, Update, Delete) operations on a list of names stored in a MySQL database.
+
+## Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+- Python 3.x installed.
+
+- MySQL server installed and running. (www.freesqldatabase.com)
+
+- Required Python packages are installed. You can install them using pip with the provided requirements.txt file.
 
 ## Getting Started
 
-To get started with contributing, follow these steps:
-
-1. Fork the repository on GitHub.
-
-2. Clone the forked repository to your local machine:
-
-`git clone https://github.com/prideland-okoi/hngx-httpmysql-endpoints.git`
-
-\*\* Create a new branch for your contribution:
+1. Clone this repository to your local machine:
 
 ```
-git checkout -b feature/my-contribution
+git clone https://github.com/prideland-okoi/hngx-httpmysql-endpoints.git
 ```
 
-\*\* Make your changes and commit them to your branch.
+2. Navigate to the project directory:
 
-\*\* Push your branch to your forked repository:
+```cd hngx-httpmysql-endpoints
 
 ```
-git push origin feature/my-contribution
+
+3. Create a .env file in the project root and define your MySQL database configuration as follows:
+
+```
+MYSQL_DATABASE_USER=your_mysql_user`
+MYSQL_DATABASE_PASSWORD=your_mysql_password
+MYSQL_DATABASE_DB=your_database_name
+MYSQL_DATABASE_HOST=your_database_host
 ```
 
-\*\* Create a pull request (PR) from your branch to the main repository on GitHub.
+4. Install the required Python packages:
 
-\*\* Wait for your PR to be reviewed and merged.
+   ```
+   pip install -r requirements.txt
+   ```
 
-## Coding Guidelines
+5. Run the Flask application:
+   ```
+   python run.py
+   ```
+   or
+   ```
+   waitress-serve --host=0.0.0.0 --port=5000 run:app
+   ```
+   or
+   ```
+    gunicorn -b 0.0.0.0:5000 run:app
+   ```
 
-Please adhere to the following coding guidelines:
+The API should now be running at http://localhost:5000.
 
-- Follow the PEP 8 style guide for Python code.
+## API Endpoints
 
-- Write clear and concise commit messages.
+- `GET /api`: Get a list of all names.
 
-## Reporting Issues
+- `GET /api/<name>`: Get a name by name.
 
-If you encounter any issues or have suggestions for improvements, please open an issue on GitHub.
+- `POST /api`: Create a new name.
+
+- `PUT /api/<name>`: Update a name and track.
+
+- `DELETE /api/<name>`: Delete a name.
+
+## Usage
+
+You can use any HTTP client or tools like curl to interact with the API. Here are some sample requests:
+
+- Get all names:
+  `curl http://localhost:5000/api/`
+
+- Get a name by name:
+  `curl http://localhost:5000/api/lucy`
+
+- Create a new name:
+  `curl -X POST -H "Content-Type: application/json" -d '{"name": "bernard"}, {"track":"mobile"}' http://localhost:5000/api`
+
+- Update a name:
+  `curl -X PUT -H "Content-Type: application/json" -d '{"name": "sandra"}, {"track":"frontend"}' http://localhost:5000/api/lucy`
+
+- Delete a name:
+  `curl -X DELETE http://localhost:5000/api/sandra`
+
+## Contributing
+
+Contributions are welcome! Please read the [CONTRIBUTING.md](https://github.com/Prideland-Okoi/hngx-httpmysql-endpoints/blob/main/CONTRIBUTING.md) file for guidelines on how to contribute to this project.
 
 ## License
 
-By contributing to this project, you agree that your contributions will be licensed under the [MIT License](https://mit-license.org/). For more details, see the LICENSE file.
+This project is licensed under the MIT License - see the [LICENSE](http://www.opensource.org/licenses/mit-license) file for details.
