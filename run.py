@@ -61,9 +61,9 @@ def get_name(name):
             
             result_data = {
             #"id": result[0],
-            "name": result[0],
-            "track": result[1],
-            "language": result[2]
+            "name": result[1],
+            "track": result[2],
+            "language": result[3]
         }
 
             return jsonify({'data': result_data}), 200
