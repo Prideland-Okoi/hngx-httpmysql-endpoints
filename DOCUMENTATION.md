@@ -23,43 +23,46 @@ This documentation provides information on how to use the Student Management API
 
 - Example Response (Success):
 
-`{
+````{
   "message": "studentlog created successfully",
   "student log": {
     "id": 1,
     "name": "John Doe",
     "track": "Computer Science"
   }
-}`
+}```
 
 ### Get a Student by Name (HTTP GET)
 
-URL: /api/<name>
-Method: GET
-Example Response (Success):
+- **URL:** `/api/<name>`
+- **Method:** `GET`
 
-`{
+* Example Response (Success):
+
+```{
   "student info": {
     "id": 1,
     "name": "John Doe",
     "track": "Computer Science"
   }
-}`
+}```
 
 ### Update a Student by Name (HTTP PUT)
 
-URL: /api/<name>
-Method: PUT
-Request Body: JSON
-name (string, required): New name for the student.
-track (string, required): New track for the student.
-Example Request:
+- ** URL:** `/api/<name>`
+- **Method:** `PUT`
+- **Request Body:** JSON
+    *name* (string, required): New name for the student.
+    *track* (string, required): New track for the student.
 
-`{
+* Example Request:
+
+```{
   "name": "Jane Smith",
   "track": "Mathematics"
-}`
-Example Response (Success):
+}```
+
+* Example Response (Success):
 
 `{
   "message": "student updated successfully",
@@ -68,18 +71,19 @@ Example Response (Success):
 
 ### Delete a Student by Name (HTTP DELETE)
 
-URL: /api/<name>
-Method: DELETE
-Example Response (Success):
+- **URL:** `/api/<name>`
+- *Method:* DELETE
+* Example Response (Success):
 
-`{
+```{
   "message": "student deleted successfully",
   "data": {
     "name": "Jane Smith"
   }
-}`
+}```
 
 ## Error Handling
 
 If an invalid request is made or an error occurs, the API will respond with an error message and an appropriate status code.
 For more details on how to use each endpoint, refer to the Usage section in the README.md file.
+````
