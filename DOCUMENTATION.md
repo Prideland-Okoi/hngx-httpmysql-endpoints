@@ -16,7 +16,7 @@ This documentation provides information on how to use the Student Management API
 
 ```
 {
-  "name": "lucy",
+  "name": "Lucy Obinna",
   "track": "frontend"
 }
 ```
@@ -28,8 +28,8 @@ This documentation provides information on how to use the Student Management API
   "message": "studentlog created successfully",
   "student log": {
     "id": 1,
-    "name": "John Doe",
-    "track": "Computer Science"
+    "name": "Lucy Obinna",
+    "track": "frontend"
   }
 }
 ```
@@ -45,8 +45,8 @@ This documentation provides information on how to use the Student Management API
 {
   "student info": {
     "id": 1,
-    "name": "John Doe",
-    "track": "Computer Science"
+    "name": "Lucy Obinna",
+    "track": "frontend"
   }
 }
 ```
@@ -63,7 +63,7 @@ This documentation provides information on how to use the Student Management API
 
 ```
 {
-  "name": "thompson",
+  "name": "Thompson Odinaka",
   "track": "backend"
 }
 ```
@@ -73,7 +73,7 @@ This documentation provides information on how to use the Student Management API
 ```
 {
   "message": "student updated successfully",
-  "student info": "Jane Smith"
+  "student info": "Thompson Odinaka"
 }
 ```
 
@@ -88,7 +88,7 @@ This documentation provides information on how to use the Student Management API
 {
   "message": "student deleted successfully",
   "data": {
-    "name": "Jane Smith"
+    "name": "Thompson Odinaka"
   }
 }
 ```
